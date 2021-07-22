@@ -44,3 +44,9 @@ code {
 	margin: auto;
 	text-align: left;
 }
+.m-card {
+	width: 400px;
+}
+.m-card img {
+	width: 100%;
+}
