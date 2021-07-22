@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { paginate, makeArrayFromANumber, sorting } from "./utils/utils";
+import queryString from "query-string";
 import Swal from "sweetalert2";
+
+import { Link } from "react-router-dom";
 var allUsers = [];
-function Users() {
+function Users(props) {
+	let queryData = props.location.search;
+	queryData = queryString.parse(queryData);
+	console.log(queryData);
+
 	let [users, setUsers] = useState([]);
 	const [pageSize, setPageSize] = useState(100);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [sortColumn, setSortColumn] = useState("id");
-	const [sortOrder, setSortOrder] = useState("asc");
+	const [sortColumn, setSortColumn] = useState(
+		queryData.sortBy ? queryData.sortBy : "id",
+	);
+	const [sortOrder, setSortOrder] = useState(
+		queryData.sortOrder ? queryData.sortOrder : "asc",
+	);
 	//pagination
 	let data = paginate(users, currentPage, pageSize);
 	//sorting
@@ -26,7 +37,6 @@ function Users() {
 		}
 		getUsers();
 	}, []);
-	console.log(allUsers);
 
 	const handlePageChange = (linkNo) => {
 		if (linkNo === "previous") setCurrentPage(currentPage - 1);
@@ -105,13 +115,13 @@ function Users() {
 				<label for="customRange2" class="form-label">
 					Example range
 				</label>
-				<input
-					type="range"
-					class="form-range"
-					min="0"
-					max="5"
-					id="customRange2"></input>
 			</div>
+
+			<Link to="/users/new">
+				<button style={{ display: "block" }} className="btn btn-success ">
+					Create User +
+				</button>
+			</Link>
 
 			<div className="table-wrapper shadow-sm p-3 rounded">
 				<table className="table m-table">

@@ -50,3 +50,26 @@ code {
 .m-card img {
 	width: 100%;
 }
+
+a {
+	text-decoration: none;
+}
+.m-navbar {
+	display: flex;
+	justify-content: flex-end;
+}
+.m-navbar .nav-list {
+	display: flex;
+}
+
+.sidebar-links {
+	text-align: center;
+	padding: 10px;
+	cursor: pointer;
+}
+.sidebar-links:hover {
+	background-color: white;
+}
+.sidebar-links.active {
+	background-color: indigo;
+}

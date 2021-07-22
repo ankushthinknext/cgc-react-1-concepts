@@ -15,13 +15,18 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import NotFound from "./components/NotFound";
 import User from "./components/User";
+import Dashboard from "./screens/Dashboard";
 
 function App() {
 	return (
-		<div className="App">
+		<div>
 			<Switch>
-				<Route path="/counter" component={Counter} />
+				<Route
+					path="/counter"
+					render={(props) => <Counter name="ankush" {...props} />}
+				/>
 				<Route path="/cities" component={Cities} />
+				<Route path="/dashboard" component={Dashboard} />
 				<Route path="/users/new" component={UserForm} />
 				<Route path="/user/:id?" component={User} />
 				<Route path="/users" component={Users} />

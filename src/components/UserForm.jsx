@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Joi from "joi-browser";
 import Swal from "sweetalert2";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 
-export default function UserForm() {
+export default function UserForm(props) {
+	console.log(useLocation().search);
 	const [errors, setErrors] = useState([]);
 	const [formData, setFormData] = useState({
 		name: "",
@@ -54,8 +56,15 @@ export default function UserForm() {
 		}
 	};
 
+	const goBackwards = () => {
+		props.history.push("/counter");
+	};
+
 	return (
 		<div className="user-form border p-4 mt-5 rounded shadow-sm">
+			<button onClick={goBackwards} className="btn btn-secondary mb-5">
+				Go Back
+			</button>
 			<form onSubmit={handleFormSubmit} onChange={handleFormChange} action="">
 				{errors.length !== 0 &&
 					errors.map((error) => (
