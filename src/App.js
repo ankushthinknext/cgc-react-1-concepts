@@ -16,6 +16,8 @@ import Home from "./components/Home";
 import NotFound from "./components/NotFound";
 import User from "./components/User";
 import Dashboard from "./screens/Dashboard";
+import Login from "./screens/LoginPanel";
+import LoginPanel from "./screens/LoginPanel";
 
 function App() {
 	return (
@@ -26,6 +28,7 @@ function App() {
 					render={(props) => <Counter name="ankush" {...props} />}
 				/>
 				<Route path="/cities" component={Cities} />
+				<Route path="/login" component={LoginPanel} />
 				<Route path="/dashboard" component={Dashboard} />
 				<Route path="/users/new" component={UserForm} />
 				<Route path="/user/:id?" component={User} />

@@ -112,12 +112,9 @@ function Users(props) {
 					id="exampleFormControlInput1"
 					placeholder="Search the users...."
 				/>
-				<label for="customRange2" class="form-label">
-					Example range
-				</label>
 			</div>
 
-			<Link to="/users/new">
+			<Link to={`${props.match.path}/new`}>
 				<button style={{ display: "block" }} className="btn btn-success ">
 					Create User +
 				</button>
