@@ -1,36 +1,31 @@
 import React from "react";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		"& > *": {
+			margin: theme.spacing(1),
+		},
+	},
+	redButton: {
+		backgroundColor: "black",
+	},
+}));
 
 export default function Login() {
+	const classes = useStyles();
 	return (
 		<div>
-			<form style={{ width: "100%" }} className="">
-				<h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
-				<label for="inputEmail" className="sr-only">
-					Username
-				</label>
-				<input
-					type="email"
-					id="inputEmail"
-					className="form-control"
-					placeholder="Email address"
-					required
-					autofocus
-				/>
-				<label for="inputPassword" className="sr-only">
-					Password
-				</label>
-				<input
-					type="password"
-					id="inputPassword"
-					className="form-control"
-					placeholder="Password"
-					required
-				/>
-
-				<button className="btn btn-lg btn-primary btn-block" type="submit">
-					Sign in
-				</button>
-			</form>
+			<Button variant="contained" color="secondary">
+				Submit
+			</Button>
+			<Button variant="contained" className={classes.redButton}>
+				Default
+			</Button>
+			<Button variant="contained" color="primary">
+				Primary
+			</Button>
 		</div>
 	);
 }

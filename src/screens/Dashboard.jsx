@@ -11,6 +11,7 @@ import Transaction from "../components/Transaction";
 import Categories from "../components/Categories";
 import Orders from "../components/Orders";
 import UserForm from "../components/UserForm";
+import DashboardPanel from "../components/DashboardPanel";
 
 function Dashboard(props) {
 	return (
@@ -24,6 +25,7 @@ function Dashboard(props) {
 				</div>
 				<div className="d-main">
 					<Switch>
+						<Route path={`${props.match.path}/`} component={DashboardPanel} />
 						<Route
 							path={`${props.match.path}/users/new`}
 							component={UserForm}
