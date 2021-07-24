@@ -18,19 +18,6 @@ const useStyles = makeStyles({
 	},
 });
 
-const data = {
-	labels: ["1", "2", "3", "4", "5", "6"],
-	datasets: [
-		{
-			label: "# of Votes",
-			data: [12, 19, 3, 5, 2, 3],
-			fill: false,
-			backgroundColor: "rgb(255, 99, 132)",
-			borderColor: "rgba(255, 99, 132, 0.2)",
-		},
-	],
-};
-
 const options = {
 	scales: {
 		yAxes: [
@@ -45,19 +32,48 @@ const options = {
 
 function DashboardPanel() {
 	const classes = useStyles();
+	const [weeklyTransactions, setWeeklyTransactions] = useState(null);
+	const [dashboardData, setDashboardData] = useState(null);
 	const [query, setQuery] = useState({
 		start: moment().startOf("week").format("llll"),
 		end: moment().endOf("week").format("llll"),
 		limit: 5,
 	});
-	const [weeklyTransactions, setWeeklyTransactions] = useState(null);
-	const [dashboardData, setDashboardData] = useState(null);
+	const [chartData, setChartData] = useState(null);
+	const weeklyData = [];
+
+	if (dashboardData && dashboardData.items) {
+		for (let i = 1; i <= 7; i++) {
+			let index = dashboardData.items.findIndex((item) => item._id == i);
+			if (index !== -1)
+				weeklyData.push(dashboardData.items[index]["grandtotal"]);
+			else weeklyData.push(0);
+		}
+	}
+
+	console.log(weeklyData);
+	console.log(dashboardData && dashboardData.items);
+	const ChartInfo = {
+		labels: ["Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"],
+		datasets: [
+			{
+				label: "# of Votes",
+				data: weeklyData,
+				fill: false,
+				backgroundColor: "rgb(255, 99, 132)",
+				borderColor: "rgba(255, 99, 132, 0.2)",
+			},
+		],
+	};
+
 	useEffect(() => {
 		axios(
 			`${
 				process.env.REACT_APP_BACKEND_API
 			}transaction/dashboard?${queryString.stringify(query)}`,
-		).then((result) => setDashboardData(result.data.data));
+		).then((result) => {
+			setDashboardData(result.data.data);
+		});
 	}, []);
 	useEffect(() => {
 		axios(
@@ -71,29 +87,29 @@ function DashboardPanel() {
 		<div>
 			<Container>
 				<Grid container>
-					<Grid item lg={4} md={6} xs={12} className="d-sm-cards">
-						<Paper>
+					<Grid item lg={4} md={6} xs={12}>
+						<Paper className="d-sm-cards maroon-card">
 							<h3>{dashboardData && dashboardData.count}</h3>
 							<h5>Transactions</h5>
 						</Paper>
 					</Grid>
-					<Grid item lg={4} md={6} xs={12} className="d-sm-cards">
-						<Paper>
+					<Grid item lg={4} md={6} xs={12}>
+						<Paper className="d-sm-cards indigo-card">
 							<h3>{dashboardData && dashboardData.total}</h3>
 							<h5>Income</h5>
 						</Paper>
 					</Grid>
-					<Grid item lg={4} md={6} xs={12} className="d-sm-cards">
-						<Paper>
+					<Grid item lg={4} md={6} xs={12}>
+						<Paper className="d-sm-cards orange-card">
 							<h3>{dashboardData && dashboardData.qty}</h3>
 							<h5>Products</h5>
 						</Paper>
 					</Grid>
 				</Grid>
-				<Grid container direction="row" alignItems="stretch">
+				<Grid container direction="row`" alignItems="stretch">
 					<Grid item lg={6} xs={12}>
 						<Paper>
-							<Line data={data} options={options} />
+							<Line data={ChartInfo} options={options} />
 						</Paper>
 					</Grid>
 					<Grid item lg={6}>

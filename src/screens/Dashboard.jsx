@@ -25,7 +25,6 @@ function Dashboard(props) {
 				</div>
 				<div className="d-main">
 					<Switch>
-						<Route path={`${props.match.path}/`} component={DashboardPanel} />
 						<Route
 							path={`${props.match.path}/users/new`}
 							component={UserForm}
@@ -41,6 +40,7 @@ function Dashboard(props) {
 							component={Categories}
 						/>
 						<Route path={`${props.match.path}/orders`} component={Orders} />
+						<Route path={`${props.match.path}/`} component={DashboardPanel} />
 					</Switch>
 				</div>
 			</div>
