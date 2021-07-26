@@ -23,17 +23,9 @@ function App() {
 	return (
 		<div>
 			<Switch>
-				<Route
-					path="/counter"
-					render={(props) => <Counter name="ankush" {...props} />}
-				/>
-				<Route path="/cities" component={Cities} />
 				<Route path="/login" component={LoginPanel} />
 				<Route path="/dashboard" component={Dashboard} />
-				<Route path="/users/new" component={UserForm} />
-				<Route path="/user/:id?" component={User} />
-				<Route path="/users" component={Users} />
-				<Route path="/home" component={Home} />
+
 				<Route path="/404" component={NotFound} />
 				<Redirect from="/" to="/404" />
 			</Switch>

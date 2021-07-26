@@ -103,7 +103,9 @@ function Users(props) {
 												</TableCell>
 
 												<TableCell align="right">
-													<EditIcon />
+													<Link to={`${props.match.path}/update/${user._id}`}>
+														<EditIcon />
+													</Link>
 													<DeleteIcon onClick={() => handleDelete(user._id)} />
 												</TableCell>
 											</TableRow>

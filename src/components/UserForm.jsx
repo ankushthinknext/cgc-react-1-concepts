@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -15,6 +15,8 @@ import Container from "@material-ui/core/Container";
 import { FormControl, InputLabel, Paper, Select } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Joi from "joi-browser";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -40,18 +42,33 @@ const useStyles = makeStyles((theme) => ({
 export default function UserFrom(props) {
 	const classes = useStyles();
 	const [formData, setFormData] = useState({});
+	const [method, setMethod] = useState("POST");
+
 	const [errors, setErrors] = useState(null);
+	useEffect(() => {
+		let userId = props.match.params.id;
+		userId &&
+			axios(`${process.env.REACT_APP_BACKEND_API}user/${userId}`).then(
+				(result) => {
+					if (result.data.status === "success") {
+						setFormData(result.data.data);
+						setMethod("PUT");
+					}
+				},
+			);
+	}, []);
+	console.log(formData);
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-	console.log(formData);
+
 	const userFormSchema = {
 		fullname: Joi.string().required().min(8).max(50),
 		username: Joi.string().required().min(8).max(30),
 		email: Joi.string().email().required().min(8).max(30),
 		password: Joi.string().required().min(8).max(30),
-		role: Joi.string().required().min(8).max(30),
+		role: Joi.string().required(),
 	};
 
 	console.log(errors);
@@ -66,12 +83,26 @@ export default function UserFrom(props) {
 			setErrors(validation.error.details);
 			return;
 		}
-
-		//make post http request
-
-		//
+		axios({
+			method: method,
+			url: `${process.env.REACT_APP_BACKEND_API}${
+				method === "PUT" ? "user/" + props.match.params.id : "user"
+			}`,
+			data: formData,
+		})
+			.then((result) => {
+				if (result.data.status === "success") {
+					setErrors(null);
+					Swal.fire("Success", "User created successfully...", "success");
+					props.history.goBack();
+				} else {
+					Swal.fire("Opps", "Something went wrong...", "error");
+				}
+			})
+			.catch((err) => Swal.fire("Opps", "Something went wrong...", "error"));
 	};
-
+	console.log(errors);
+	console.log(formData);
 	return (
 		<Container component="main" maxWidth="lg">
 			<Typography component="h1" variant="h5">
@@ -91,21 +122,24 @@ export default function UserFrom(props) {
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<TextField
-									autoComplete="fname"
 									name="fullname"
 									variant="outlined"
 									required
 									fullWidth
 									id="firstName"
-									label="Full Name"
-									autoFocus
+									placeholder="Full Name"
+									name="fullname"
+									InputLabelProps={{
+										shrink: false,
+									}}
+									value={formData && formData.fullname}
 								/>
 								{errors &&
 									errors.find((error) => error.context.key === "fullname") &&
 									errors
 										.filter((error) => error.context.key === "fullname")
 										.map((error) => (
-											<p className="p-errors">{error.message}</p>
+											<p className="p-errors ">{error.message}</p>
 										))}
 							</Grid>
 							<Grid item xs={12} sm={6}>
@@ -114,9 +148,14 @@ export default function UserFrom(props) {
 									required
 									fullWidth
 									id="lastName"
-									label="User Name"
+									placeholder="Username"
+									name="username"
+									InputLabelProps={{
+										shrink: false,
+									}}
 									name="username"
 									autoComplete="lname"
+									value={formData && formData.username}
 								/>
 								{errors &&
 									errors.find((error) => error.context.key === "username") &&
@@ -133,9 +172,13 @@ export default function UserFrom(props) {
 									required
 									fullWidth
 									id="email"
-									label="Email Address"
+									placeholder="Email Address"
 									name="email"
+									InputLabelProps={{
+										shrink: false,
+									}}
 									autoComplete="email"
+									value={formData && formData.email}
 								/>
 								{errors &&
 									errors.find((error) => error.context.key === "email") &&
@@ -152,10 +195,11 @@ export default function UserFrom(props) {
 										required
 										fullWidth
 										name="password"
-										label="Password"
 										type="password"
-										id="password"
-										autoComplete="current-password"
+										placeholder="Password"
+										InputLabelProps={{
+											shrink: false,
+										}}
 									/>
 									{errors &&
 										errors.find((error) => error.context.key === "password") &&
@@ -177,20 +221,46 @@ export default function UserFrom(props) {
 											id: "outlined-age-native-simple",
 										}}>
 										<option aria-label="None" value="" />
-										<option value="admin">Admin</option>
-										<option value="cashier">Cashier</option>
+										<option
+											selected={`${formData.role === "admin"}`}
+											value="admin">
+											Admin
+										</option>
+										<option
+											selected={`${formData.role === "cashier"}`}
+											value="cashier">
+											Cashier
+										</option>
 									</Select>
+									{errors &&
+										errors.find((error) => error.context.key === "role") &&
+										errors
+											.filter((error) => error.context.key === "role")
+											.map((error) => (
+												<p className="p-errors">{error.message}</p>
+											))}
 								</FormControl>
 							</Grid>
 						</Grid>
-						<Button
-							type="submit"
-							variant="contained"
-							size="large"
-							color="secondary"
-							className="c-btn mt-5">
-							Submit
-						</Button>
+						{method === "POST" ? (
+							<Button
+								type="submit"
+								variant="contained"
+								size="large"
+								color="secondary"
+								className="c-btn mt-5">
+								Create
+							</Button>
+						) : (
+							<Button
+								type="submit"
+								variant="contained"
+								size="large"
+								color="secondary"
+								className="c-btn mt-5">
+								Update
+							</Button>
+						)}
 					</form>
 				</div>
 			</Paper>

@@ -53,7 +53,6 @@ code {
 
 a {
 	text-decoration: none;
-	color: white;
 }
 a:hover {
 	color: black;
@@ -111,4 +110,7 @@ a:hover {
 		rgba(234, 81, 121, 1) 0%,
 		rgba(172, 54, 115, 1) 100%
 	);
+}
+.p-errors {
+	color: red;
 }
