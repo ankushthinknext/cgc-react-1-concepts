@@ -71,7 +71,7 @@ a:hover {
 	padding: 10px;
 	cursor: pointer;
 }
-.sidebar-links:hover {
+.sidebar-links h .sidebar-links:hover {
 	background-color: white;
 }
 .sidebar-links.active {
@@ -102,5 +102,13 @@ a:hover {
 		16deg,
 		rgba(245, 90, 158, 1) 0%,
 		rgba(255, 155, 106, 1) 100%
+	);
+}
+.c-btn {
+	color: #ffffff;
+	background: linear-gradient(
+		45deg,
+		rgba(234, 81, 121, 1) 0%,
+		rgba(172, 54, 115, 1) 100%
 	);
 }

@@ -4,3 +4,7 @@
 .login-screen .left {
 	width: 70%;
 }
+
+.p-errors {
+	color: red !important;
+}

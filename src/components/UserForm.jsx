@@ -1,116 +1,199 @@
 import React, { useState } from "react";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import { FormControl, InputLabel, Paper, Select } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Joi from "joi-browser";
-import Swal from "sweetalert2";
-import { useHistory, useParams, useLocation } from "react-router-dom";
 
-export default function UserForm(props) {
-	console.log(useLocation().search);
-	const [errors, setErrors] = useState([]);
-	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		age: "",
-	});
-	const formSchema = {
-		name: Joi.string().required().min(5).max(30),
-		email: Joi.string()
-			.email({ minDomainAtoms: 2, tlds: { allow: ["com", "net", "in"] } })
-			.required()
-			.min(7)
-			.max(30),
-		age: Joi.number().integer().required().min(10).max(100),
+const useStyles = makeStyles((theme) => ({
+	paper: {
+		marginTop: theme.spacing(8),
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
+	form: {
+		width: "100%", // Fix IE 11 issue.
+		marginTop: theme.spacing(3),
+		padding: "20px",
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2),
+	},
+}));
+
+export default function UserFrom(props) {
+	const classes = useStyles();
+	const [formData, setFormData] = useState({});
+	const [errors, setErrors] = useState(null);
+
+	const handleChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-	const handleFormChange = (e) => {
-		let newFormData = { ...formData };
-		newFormData[e.target.name] = e.target.value;
-		setFormData(newFormData);
+	console.log(formData);
+	const userFormSchema = {
+		fullname: Joi.string().required().min(8).max(50),
+		username: Joi.string().required().min(8).max(30),
+		email: Joi.string().email().required().min(8).max(30),
+		password: Joi.string().required().min(8).max(30),
+		role: Joi.string().required().min(8).max(30),
 	};
+
 	console.log(errors);
-
-	const handleFormSubmit = (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		let validationResults = Joi.validate(formData, formSchema);
-		if (validationResults.error) setErrors(validationResults.error.details);
-		if (!validationResults.error) createUser();
-		async function createUser() {
-			let result = await fetch(
-				"https://60efff36f587af00179d3c01.mockapi.io/persons",
-				{
-					method: "POST",
-					body: JSON.stringify(formData),
-					headers: {
-						"Content-type": "application/json",
-					},
-				},
-			);
-			if (result.status === 201) {
-				Swal.fire({
-					position: "top-end",
-					icon: "success",
-					title: "User created successfully!",
-					showConfirmButton: false,
-					timer: 1500,
-				});
-				setErrors([]);
-			}
-		}
-	};
+		//validate form data
 
-	const goBackwards = () => {
-		props.history.push("/counter");
+		let validation = Joi.validate(formData, userFormSchema, {
+			abortEarly: false,
+		});
+		if (validation.error) {
+			setErrors(validation.error.details);
+			return;
+		}
+
+		//make post http request
+
+		//
 	};
 
 	return (
-		<div className="user-form border p-4 mt-5 rounded shadow-sm">
-			<button onClick={goBackwards} className="btn btn-secondary mb-5">
-				Go Back
-			</button>
-			<form onSubmit={handleFormSubmit} onChange={handleFormChange} action="">
-				{errors.length !== 0 &&
-					errors.map((error) => (
-						<div class="alert alert-danger" role="alert">
-							{error.message}
-						</div>
-					))}
-				<div className="mb-3">
-					<label for="exampleFormControlInput1" className="form-label">
-						Name
-					</label>
-					<input
-						name="name"
-						type="text"
-						className="form-control"
-						id="exampleFormControlInput1"
-						placeholder="Name"
-					/>
+		<Container component="main" maxWidth="lg">
+			<Typography component="h1" variant="h5">
+				<Button variant="defult" onClick={() => props.history.goBack()}>
+					<ArrowBackIcon />
+				</Button>{" "}
+				New User
+			</Typography>
+
+			<Paper>
+				<div className={classes.paper}>
+					<form
+						onSubmit={handleSubmit}
+						onChange={handleChange}
+						className={classes.form}
+						noValidate>
+						<Grid container spacing={2}>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									autoComplete="fname"
+									name="fullname"
+									variant="outlined"
+									required
+									fullWidth
+									id="firstName"
+									label="Full Name"
+									autoFocus
+								/>
+								{errors &&
+									errors.find((error) => error.context.key === "fullname") &&
+									errors
+										.filter((error) => error.context.key === "fullname")
+										.map((error) => (
+											<p className="p-errors">{error.message}</p>
+										))}
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									variant="outlined"
+									required
+									fullWidth
+									id="lastName"
+									label="User Name"
+									name="username"
+									autoComplete="lname"
+								/>
+								{errors &&
+									errors.find((error) => error.context.key === "username") &&
+									errors
+										.filter((error) => error.context.key === "username")
+										.map((error) => (
+											<p className="p-errors">{error.message}</p>
+										))}
+							</Grid>
+
+							<Grid item xs={12} sm={6}>
+								<TextField
+									variant="outlined"
+									required
+									fullWidth
+									id="email"
+									label="Email Address"
+									name="email"
+									autoComplete="email"
+								/>
+								{errors &&
+									errors.find((error) => error.context.key === "email") &&
+									errors
+										.filter((error) => error.context.key === "email")
+										.map((error) => (
+											<p className="p-errors">{error.message}</p>
+										))}
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<Grid item xs={12}>
+									<TextField
+										variant="outlined"
+										required
+										fullWidth
+										name="password"
+										label="Password"
+										type="password"
+										id="password"
+										autoComplete="current-password"
+									/>
+									{errors &&
+										errors.find((error) => error.context.key === "password") &&
+										errors
+											.filter((error) => error.context.key === "password")
+											.map((error) => (
+												<p className="p-errors">{error.message}</p>
+											))}
+								</Grid>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<FormControl variant="outlined" fullWidth>
+									<Select
+										native
+										fullWidth
+										label="Age"
+										inputProps={{
+											name: "role",
+											id: "outlined-age-native-simple",
+										}}>
+										<option aria-label="None" value="" />
+										<option value="admin">Admin</option>
+										<option value="cashier">Cashier</option>
+									</Select>
+								</FormControl>
+							</Grid>
+						</Grid>
+						<Button
+							type="submit"
+							variant="contained"
+							size="large"
+							color="secondary"
+							className="c-btn mt-5">
+							Submit
+						</Button>
+					</form>
 				</div>
-				<div className="mb-3">
-					<label for="exampleFormControlInput1" className="form-label">
-						Email
-					</label>
-					<input
-						name="email"
-						type="email"
-						className="form-control"
-						id="exampleFormControlInput1"
-						placeholder=""
-					/>
-				</div>
-				<div className="mb-3">
-					<label for="exampleFormControlInput1" className="form-label">
-						age
-					</label>
-					<input
-						name="age"
-						type="number"
-						className="form-control"
-						id="exampleFormControlInput1"
-					/>
-				</div>
-				<button type="submit" className="btn btn-dark">
-					Submit
-				</button>
-			</form>
-		</div>
+			</Paper>
+		</Container>
 	);
 }
