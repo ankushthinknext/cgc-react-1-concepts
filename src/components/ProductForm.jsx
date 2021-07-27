@@ -17,6 +17,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Joi from "joi-browser";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ImageIcon from "@material-ui/icons/Image";
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -39,13 +40,28 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function UserFrom(props) {
+export default function ProductForm(props) {
 	const classes = useStyles();
 	const [formData, setFormData] = useState({});
 	const [method, setMethod] = useState("POST");
+	const [categories, setCategories] = useState(null);
+	const [image, setImage] = useState(null);
+	const [multiForm, setMultiForm] = useState(null);
+
+	if (!image) {
+		let reqFormData = new FormData();
+		reqFormData.append("image", image);
+		for (let i in formData) {
+			reqFormData.append(i, formData[i]);
+		}
+
+		console.log(reqFormData);
+	}
+	console.log(multiForm);
 
 	const [errors, setErrors] = useState(null);
 	useEffect(() => {
+		let productId = props.match.params.id;
 		let userId = props.match.params.id;
 		userId &&
 			axios(`${process.env.REACT_APP_BACKEND_API}user/${userId}`).then(
@@ -57,21 +73,24 @@ export default function UserFrom(props) {
 				},
 			);
 	}, []);
-	console.log(formData);
+
+	useEffect(() => {
+		axios(`${process.env.REACT_APP_BACKEND_API}category`).then((result) => {
+			if (result.data.status === "success")
+				setCategories(result.data.data.categories);
+		});
+	}, []);
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
 	const userFormSchema = {
-		fullname: Joi.string().required().min(8).max(50),
-		username: Joi.string().required().min(8).max(30),
-		email: Joi.string().email().required().min(8).max(30),
-		password:
-			method === "PUT"
-				? Joi.string().min(8).max(30)
-				: Joi.string().required().min(8).max(30),
-		role: Joi.string().required(),
+		name: Joi.string().required().min(8).max(100),
+		price: Joi.number().required().min(0).max(10000000000000),
+		description: Joi.string().required().max(300),
+
+		category: Joi.string().required(),
 	};
 
 	console.log(formData);
@@ -89,7 +108,7 @@ export default function UserFrom(props) {
 		axios({
 			method: method,
 			url: `${process.env.REACT_APP_BACKEND_API}${
-				method === "PUT" ? "user/" + props.match.params.id : "user"
+				method === "PUT" ? "product/" + props.match.params.id : "product"
 			}`,
 			data: formData,
 		})
@@ -98,7 +117,9 @@ export default function UserFrom(props) {
 					setErrors(null);
 					Swal.fire(
 						"Success",
-						`User ${method === "PUT" ? "updated" : "created"} successfully...`,
+						`Product ${
+							method === "PUT" ? "updated" : "created"
+						} successfully...`,
 						"success",
 					);
 					props.history.goBack();
@@ -108,15 +129,25 @@ export default function UserFrom(props) {
 			})
 			.catch((err) => Swal.fire("Opps", "Something went wrong...", "error"));
 	};
+	const handleUpload = (e) => {
+		var fileReader = new FileReader();
+		fileReader.readAsDataURL(e.target.files[0]);
+		fileReader.onload = function (oFREvent) {
+			console.log(oFREvent.target.result);
+			setImage(oFREvent.target.result);
+		};
+	};
+
 	console.log(errors);
 	console.log(formData);
+	console.log(image);
 	return (
 		<Container component="main" maxWidth="lg">
 			<Typography component="h1" variant="h5">
 				<Button variant="defult" onClick={() => props.history.goBack()}>
 					<ArrowBackIcon />
 				</Button>{" "}
-				New User
+				New Product
 			</Typography>
 
 			<Paper>
@@ -129,22 +160,20 @@ export default function UserFrom(props) {
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<TextField
-									name="fullname"
+									name="name"
 									variant="outlined"
 									required
 									fullWidth
-									id="firstName"
-									placeholder="Full Name"
-									name="fullname"
+									placeholder="Product Name"
 									InputLabelProps={{
 										shrink: false,
 									}}
-									value={formData && formData.fullname}
+									value={formData && formData.name}
 								/>
 								{errors &&
-									errors.find((error) => error.context.key === "fullname") &&
+									errors.find((error) => error.context.key === "name") &&
 									errors
-										.filter((error) => error.context.key === "fullname")
+										.filter((error) => error.context.key === "name")
 										.map((error) => (
 											<p className="p-errors ">{error.message}</p>
 										))}
@@ -155,37 +184,36 @@ export default function UserFrom(props) {
 									required
 									fullWidth
 									id="lastName"
-									placeholder="Username"
-									name="username"
+									placeholder="Price"
+									name="price"
 									InputLabelProps={{
 										shrink: false,
 									}}
-									name="username"
-									autoComplete="lname"
-									value={formData && formData.username}
+									value={formData && formData.price}
 								/>
 								{errors &&
-									errors.find((error) => error.context.key === "username") &&
+									errors.find((error) => error.context.key === "price") &&
 									errors
-										.filter((error) => error.context.key === "username")
+										.filter((error) => error.context.key === "price")
 										.map((error) => (
 											<p className="p-errors">{error.message}</p>
 										))}
 							</Grid>
 
-							<Grid item xs={12} sm={6}>
+							<Grid item sm={12}>
 								<TextField
 									variant="outlined"
 									required
 									fullWidth
+									multiline
+									rows={3}
 									id="email"
-									placeholder="Email Address"
-									name="email"
+									placeholder="Product description"
+									name="description"
 									InputLabelProps={{
 										shrink: false,
 									}}
-									autoComplete="email"
-									value={formData && formData.email}
+									value={formData && formData.description}
 								/>
 								{errors &&
 									errors.find((error) => error.context.key === "email") &&
@@ -195,79 +223,71 @@ export default function UserFrom(props) {
 											<p className="p-errors">{error.message}</p>
 										))}
 							</Grid>
-							<Grid item xs={12} sm={6}>
-								<Grid item xs={12}>
-									<TextField
-										variant="outlined"
-										required
-										fullWidth
-										name="password"
-										type="password"
-										placeholder="Password"
-										InputLabelProps={{
-											shrink: false,
-										}}
-									/>
-									{errors &&
-										errors.find((error) => error.context.key === "password") &&
-										errors
-											.filter((error) => error.context.key === "password")
-											.map((error) => (
-												<p className="p-errors">{error.message}</p>
-											))}
-								</Grid>
-							</Grid>
-							<Grid item xs={12} sm={6}>
+
+							<Grid item xs={12} sm={12}>
 								<FormControl variant="outlined" fullWidth>
 									<Select
 										native
 										fullWidth
 										label="Age"
 										inputProps={{
-											name: "role",
+											name: "category",
 											id: "outlined-age-native-simple",
 										}}>
 										<option aria-label="None" value="" />
-										<option
-											selected={`${formData.role === "admin"}`}
-											value="Admin">
-											Admin
-										</option>
-										<option
-											selected={`${formData.role === "cashier"}`}
-											value="Cashier">
-											Cashier
-										</option>
+										{categories &&
+											categories.map((category) => (
+												<option value={category._id}>{category.name}</option>
+											))}
 									</Select>
 									{errors &&
-										errors.find((error) => error.context.key === "role") &&
+										errors.find((error) => error.context.key === "category") &&
 										errors
-											.filter((error) => error.context.key === "role")
+											.filter((error) => error.context.key === "category")
 											.map((error) => (
 												<p className="p-errors">{error.message}</p>
 											))}
 								</FormControl>
 							</Grid>
 						</Grid>
-						{method === "POST" ? (
+						<label className="my-2" htmlFor="icon-button-file">
 							<Button
-								type="submit"
+								className="c-btn"
 								variant="contained"
-								size="large"
-								color="secondary"
-								className="c-btn mt-5">
-								Create
+								color="primary"
+								component="span">
+								<ImageIcon /> &nbsp; Upload
 							</Button>
-						) : (
-							<Button
-								type="submit"
-								variant="contained"
-								size="large"
-								color="secondary"
-								className="c-btn mt-5">
-								Update
-							</Button>
-						)}
+						</label>
+						<input
+							onChange={handleUpload}
+							accept="image/*"
+							className="d-none"
+							id="icon-button-file"
+							type="file"
+						/>
+						{image && <img style={{ width: "200px" }} src={image} alt="" />}
+						<Grid container justifyContent="flex-end">
+							{method === "POST" ? (
+								<Button
+									type="submit"
+									variant="contained"
+									size="large"
+									color="secondary"
+									className="c-btn mt-5">
+									Create
+								</Button>
+							) : (
+								<Button
+									type="submit"
+									variant="contained"
+									size="large"
+									color="secondary"
+									className="c-btn mt-5">
+									Update
+								</Button>
+							)}
+						</Grid>
 					</form>
 				</div>
 			</Paper>
