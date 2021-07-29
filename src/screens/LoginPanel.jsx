@@ -72,7 +72,7 @@ export default function LoginPanel(props) {
 		}
 		async function attemptLogin() {
 			let result = await fetch(
-				"https://cashie-backend.herokuapp.com/api/auth/login",
+				`${process.env.REACT_APP_BACKEND_API}auth/login`,
 				{
 					method: "POST",
 					body: JSON.stringify(formData),
@@ -84,6 +84,7 @@ export default function LoginPanel(props) {
 			let data = await result.json();
 			if (data.status === "success") {
 				setErrors([]);
+				localStorage.setItem("token", data.token);
 				props.history.push("/dashboard");
 			} else {
 				setErrors([{ message: "Authentication failed" }]);

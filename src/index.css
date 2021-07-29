@@ -114,3 +114,6 @@ a:hover {
 .p-errors {
 	color: red;
 }
+.tabs-wrapper {
+	flex-wrap: wrap;
+}

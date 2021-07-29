@@ -43,11 +43,14 @@ function Products(props) {
 	});
 
 	useEffect(() => {
-		axios(
-			`${process.env.REACT_APP_BACKEND_API}product?${queryString.stringify(
+		axios({
+			url: `${process.env.REACT_APP_BACKEND_API}product?${queryString.stringify(
 				query,
 			)}`,
-		).then((result) => {
+			headers: {
+				authorization: `Bearer ${localStorage.getItem("token")}`,
+			},
+		}).then((result) => {
 			if (result.data.status === "success")
 				setProducts(result.data.data.products);
 		});
@@ -64,7 +67,11 @@ function Products(props) {
 		}).then((result) => {
 			if (result.isConfirmed) {
 				axios
-					.delete(`${process.env.REACT_APP_BACKEND_API}product/${id}`)
+					.delete(`${process.env.REACT_APP_BACKEND_API}product/${id}`, {
+						headers: {
+							authorization: `Bearer ${localStorage.getItem("token")}`,
+						},
+					})
 					.then((response) => {
 						if (response.data.status === "success") {
 							Swal.fire("Deleted!", "User has been deleted..", "success");

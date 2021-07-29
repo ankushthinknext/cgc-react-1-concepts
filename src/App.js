@@ -24,7 +24,13 @@ function App() {
 		<div>
 			<Switch>
 				<Route path="/login" component={LoginPanel} />
-				<Route path="/dashboard" component={Dashboard} />
+				<Route
+					path="/dashboard"
+					render={(props) => {
+						if (localStorage.getItem("token")) return <Dashboard {...props} />;
+						return <Redirect to="/login" />;
+					}}
+				/>
 
 				<Route path="/404" component={NotFound} />
 				<Redirect from="/" to="/404" />

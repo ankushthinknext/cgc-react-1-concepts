@@ -7,7 +7,7 @@ import FunCounter from "../components/FunCounter";
 import FunCities from "../components/FunCities";
 import "./dashboard.css";
 import Products from "../components/Products";
-import Transaction from "../components/Transaction";
+import Transactions from "../components/Transactions";
 import Categories from "../components/Categories";
 import Orders from "../components/Orders";
 import UserForm from "../components/UserForm";
@@ -46,7 +46,7 @@ function Dashboard(props) {
 						<Route path={`${props.match.path}/products`} component={Products} />
 						<Route
 							path={`${props.match.path}/transactions`}
-							component={Transaction}
+							component={Transactions}
 						/>
 						<Route
 							path={`${props.match.path}/categories`}
