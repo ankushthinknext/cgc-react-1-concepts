@@ -39,6 +39,10 @@ function Dashboard(props) {
 							path={`${props.match.path}/products/new`}
 							component={ProductForm}
 						/>
+						<Route
+							path={`${props.match.path}/products/update/:id`}
+							component={ProductForm}
+						/>
 						<Route path={`${props.match.path}/products`} component={Products} />
 						<Route
 							path={`${props.match.path}/transactions`}

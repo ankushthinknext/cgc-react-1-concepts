@@ -102,7 +102,7 @@ function Products(props) {
 							<OutlinedInput
 								id="outlined-adornment-password"
 								name="keyword"
-								placeholder="Search users..."
+								placeholder="Search products..."
 								endAdornment={
 									<InputAdornment position="end">
 										<SearchIcon />
@@ -110,21 +110,6 @@ function Products(props) {
 								}
 								labelWidth={70}
 							/>
-						</FormControl>
-						<FormControl variant="outlined" className={classes.formControl}>
-							<InputLabel htmlFor="outlined-age-native-simple">Role</InputLabel>
-							<Select
-								native
-								value=""
-								inputProps={{
-									name: "role",
-									id: "outlined-age-native-simple",
-								}}>
-								<option aria-label="None" value="" />
-								<option value="all">All</option>
-								<option value="Admin">Admin</option>
-								<option value="Cashier">Cashier</option>
-							</Select>
 						</FormControl>
 						<FormControl variant="outlined" className={classes.formControl}>
 							<InputLabel htmlFor="outlined-age-native-simple">
@@ -140,8 +125,9 @@ function Products(props) {
 								<option aria-label="None" value="" />
 								<option value="Newest">Newest</option>
 								<option value="Oldest">Oldest</option>
+								<option value="Highest to Lowest">Highest to Lowest</option>
+								<option value="Lowest to Highest">Lowest to Highest</option>
 								<option value="Name">Name</option>
-								<option value="Last Active">Last Active</option>
 							</Select>
 						</FormControl>
 					</form>

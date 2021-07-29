@@ -46,28 +46,30 @@ export default function ProductForm(props) {
 	const [method, setMethod] = useState("POST");
 	const [categories, setCategories] = useState(null);
 	const [image, setImage] = useState(null);
-	const [multiForm, setMultiForm] = useState(null);
-
-	if (!image) {
-		let reqFormData = new FormData();
-		reqFormData.append("image", image);
-		for (let i in formData) {
-			reqFormData.append(i, formData[i]);
-		}
-
-		console.log(reqFormData);
-	}
-	console.log(multiForm);
 
 	const [errors, setErrors] = useState(null);
 	useEffect(() => {
 		let productId = props.match.params.id;
-		let userId = props.match.params.id;
-		userId &&
-			axios(`${process.env.REACT_APP_BACKEND_API}user/${userId}`).then(
+
+		productId &&
+			axios(`${process.env.REACT_APP_BACKEND_API}product/${productId}`).then(
 				(result) => {
 					if (result.data.status === "success") {
-						setFormData(result.data.data);
+						let {
+							name,
+							price,
+							description,
+							image: hidden,
+							category,
+						} = result.data.data;
+						setFormData({
+							...formData,
+							name,
+							price,
+							description,
+							hidden,
+							category,
+						});
 						setMethod("PUT");
 					}
 				},
@@ -86,10 +88,19 @@ export default function ProductForm(props) {
 	};
 
 	const userFormSchema = {
-		name: Joi.string().required().min(8).max(100),
-		price: Joi.number().required().min(0).max(10000000000000),
-		description: Joi.string().required().max(300),
-
+		name:
+			method === "PUT"
+				? Joi.string().min(3).max(100)
+				: Joi.string().required().min(3).max(100),
+		price:
+			method === "PUT"
+				? Joi.string().max(10000000).min(0)
+				: Joi.number().required().min(0).max(10000000000000),
+		description:
+			method === "PUT"
+				? Joi.string().max(300)
+				: Joi.string().required().max(300),
+		hidden: Joi.string(),
 		category: Joi.string().required(),
 	};
 
@@ -105,12 +116,24 @@ export default function ProductForm(props) {
 			setErrors(validation.error.details);
 			return;
 		}
+		let multiFormData = new FormData();
+		for (let i in formData) {
+			if (i === "price") {
+				multiFormData.append(i, formData[i]);
+			} else {
+				multiFormData.append(i, formData[i]);
+			}
+		}
+		image && multiFormData.append("image", image);
 		axios({
 			method: method,
 			url: `${process.env.REACT_APP_BACKEND_API}${
 				method === "PUT" ? "product/" + props.match.params.id : "product"
 			}`,
-			data: formData,
+			data: multiFormData,
+			headers: {
+				"Content-type": "multipart/formdata",
+			},
 		})
 			.then((result) => {
 				if (result.data.status === "success") {
@@ -237,7 +260,11 @@ export default function ProductForm(props) {
 										<option aria-label="None" value="" />
 										{categories &&
 											categories.map((category) => (
-												<option value={category._id}>{category.name}</option>
+												<option
+													selected={formData.category === category._id}
+													value={category._id}>
+													{category.name}
+												</option>
 											))}
 									</Select>
 									{errors &&
@@ -261,12 +288,19 @@ export default function ProductForm(props) {
 						</label>
 						<input
 							onChange={handleUpload}
+							name="hidden"
 							accept="image/*"
 							className="d-none"
 							id="icon-button-file"
 							type="file"
 						/>
-						{image && <img style={{ width: "200px" }} src={image} alt="" />}
+						{(image || formData.hidden) && (
+							<img
+								style={{ width: "200px" }}
+								src={image ? image : formData["hidden"]}
+								alt=""
+							/>
+						)}
 						<Grid container justifyContent="flex-end">
 							{method === "POST" ? (
 								<Button
