@@ -17,6 +17,10 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import Cart from "./Cart";
+
+import { CartContext } from "../App";
+import { useContext } from "react";
 function a11yProps(index) {
 	return {
 		id: `scrollable-auto-tab-${index}`,
@@ -55,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Transactions() {
+	const cartInfo = useContext(CartContext);
 	const classes = useStyles();
 	const [value, setValue] = React.useState(0);
 
@@ -108,7 +113,9 @@ function Transactions() {
 								style={{ justifyContent: "center", width: "100%" }}>
 								{allProducts &&
 									allProducts.map((product) => (
-										<Card className={classes.card}>
+										<Card
+											onClick={() => cartInfo.handleSelection(product._id)}
+											className={classes.card}>
 											<CardActionArea>
 												<CardMedia
 													component="img"
@@ -146,7 +153,9 @@ function Transactions() {
 										className="tabs-wrapper d-flex"
 										style={{ justifyContent: "center", width: "100%" }}>
 										{category.items.map((product) => (
-											<Card className={classes.card}>
+											<Card
+												onClick={() => cartInfo.handleSelection(product._id)}
+												className={classes.card}>
 												<CardActionArea>
 													<CardMedia
 														component="img"
@@ -184,7 +193,7 @@ function Transactions() {
 				</Grid>
 				<Grid item xs={12} sm={4}>
 					<Paper>
-						<h3>Cart</h3>
+						<Cart />
 					</Paper>
 				</Grid>
 			</Grid>

@@ -111,6 +111,9 @@ a:hover {
 		rgba(172, 54, 115, 1) 100%
 	);
 }
+ul {
+	list-style: none;
+}
 .p-errors {
 	color: red;
 }
