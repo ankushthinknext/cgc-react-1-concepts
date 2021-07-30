@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Transactions() {
 	const cartInfo = useContext(CartContext);
+
 	const classes = useStyles();
 	const [value, setValue] = React.useState(0);
 
