@@ -47,6 +47,9 @@ function App() {
 		newCartItems.splice(index, 1);
 		setCartItems(newCartItems);
 	};
+	const removeAllCartItems = () => {
+		setCartItems([]);
+	};
 
 	const handleSelection = (id) => {
 		let index = cartItems.findIndex((item) => item._id == id);
@@ -76,6 +79,7 @@ function App() {
 					handleQtyChange,
 					handleSelection,
 					handleCartDelete,
+					removeAllCartItems,
 				}}>
 				<SettingsContext.Provider value={storeSettings}>
 					<Switch>

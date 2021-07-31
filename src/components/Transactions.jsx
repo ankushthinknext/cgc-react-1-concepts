@@ -21,6 +21,7 @@ import Cart from "./Cart";
 
 import { CartContext } from "../App";
 import { useContext } from "react";
+import RecieptModal from "./RecieptModal";
 function a11yProps(index) {
 	return {
 		id: `scrollable-auto-tab-${index}`,
@@ -73,6 +74,8 @@ function Transactions() {
 	};
 	const [categories, setCategories] = useState(null);
 	const [allProducts, setAllProducts] = useState(null);
+	const [recieptModalOpen, setRecieptModalOpen] = useState(false);
+	const [transactionData, setTransactionData] = useState(null);
 
 	async function getAllCategoriesAndProducts() {
 		let result = await axios(
@@ -84,10 +87,17 @@ function Transactions() {
 		setCategories(result.data.data.categories);
 		setAllProducts(result.data.data.all);
 	}
+	const handleTransactionData = (data) => {
+		setTransactionData(data);
+	};
+	const handleRecieptModal = (value) => {
+		setRecieptModalOpen(true);
+	};
+
 	useEffect(() => {
 		getAllCategoriesAndProducts();
 	}, []);
-	console.log(categories);
+	console.log(transactionData, "TRANSACTION DATA");
 	console.log(allProducts);
 	return (
 		<Container>
@@ -194,10 +204,14 @@ function Transactions() {
 				</Grid>
 				<Grid item xs={12} sm={4}>
 					<Paper>
-						<Cart />
+						<Cart
+							onTransactionData={handleTransactionData}
+							isModalOpen={handleRecieptModal}
+						/>
 					</Paper>
 				</Grid>
 			</Grid>
+			<RecieptModal isOpen={recieptModalOpen} />
 		</Container>
 	);
 }

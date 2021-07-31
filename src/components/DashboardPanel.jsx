@@ -95,7 +95,7 @@ function DashboardPanel() {
 					</Grid>
 					<Grid item lg={4} md={6} xs={12}>
 						<Paper className="d-sm-cards indigo-card">
-							<h3>{dashboardData && dashboardData.total}</h3>
+							<h3>{dashboardData && dashboardData.total.toFixed(2)}</h3>
 							<h5>Income</h5>
 						</Paper>
 					</Grid>

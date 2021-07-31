@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,17 +9,20 @@ import TableRow from "@material-ui/core/TableRow";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
+import { Button } from "@material-ui/core";
+import axios from "./utils/axiosConfig";
 
 import { CartContext, SettingsContext } from "../App";
+import RecieptModal from "./RecieptModal";
 const useStyles = makeStyles({
 	table: {},
 });
 
-function Cart() {
+function Cart(props) {
 	const classes = useStyles();
+	const [modalOpen, setModalOpen] = useState(false);
 	const storeSettings = useContext(SettingsContext);
 	const cartDetails = useContext(CartContext);
-	console.log(cartDetails.cartItems);
 	const subTotal = cartDetails.cartItems.length
 		? cartDetails.cartItems.reduce(
 				(sum, item) => sum + item.price * item.qty,
@@ -29,8 +32,26 @@ function Cart() {
 	const discount = storeSettings
 		? (+storeSettings.discount / 100) * subTotal
 		: 0;
+	const { cartItems } = cartDetails;
 	const tax = storeSettings ? (+storeSettings.tax / 100) * subTotal : 0;
 	const grandTotal = storeSettings ? subTotal + tax - discount : 0;
+	const handleSubmit = async () => {
+		let result =
+			cartItems.length !== 0
+				? await axios.post("transaction", {
+						items: cartItems,
+						discount,
+						grandtotal: grandTotal,
+						subtotal: subTotal,
+				  })
+				: false;
+		if (result && result.data.status === "success") {
+			cartDetails.removeAllCartItems();
+			props.onTransactionData(result.data.data);
+			setModalOpen(true);
+		}
+	};
+	console.log("modal state", modalOpen);
 
 	return (
 		<div>
@@ -92,8 +113,26 @@ function Cart() {
 						<TableCell align="left">Grand Total</TableCell>
 						<TableCell align="right">{grandTotal.toFixed(2)}</TableCell>
 					</TableRow>
+					<TableRow>
+						<TableCell align="left">
+							<Button variant="contained" color="dark" size="large">
+								Cancel
+							</Button>
+						</TableCell>
+						<TableCell align="right">
+							<Button
+								variant="contained"
+								onClick={handleSubmit}
+								className="c-btn"
+								disabled={cartItems.length === 0}
+								size="large">
+								Pay
+							</Button>
+						</TableCell>
+					</TableRow>
 				</TableBody>
 			</Table>
+			<RecieptModal isOpen={modalOpen} />
 		</div>
 	);
 }
