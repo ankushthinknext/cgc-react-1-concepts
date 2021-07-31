@@ -2,9 +2,9 @@
 	display: flex;
 }
 .d-sidebar {
-	width: 100px;
-	background-color: indianred;
-	height: 95vh;
+	width: 120px;
+	background-color: #303456;
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -14,4 +14,10 @@
 	flex-grow: 1;
 	height: 95vh;
 	overflow-y: auto;
+}
+.sidebar-links {
+	color: white;
+}
+.sidebar-links h6 {
+	font-size: 12px;
 }

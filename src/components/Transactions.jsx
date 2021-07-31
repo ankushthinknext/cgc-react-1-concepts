@@ -21,6 +21,7 @@ import Cart from "./Cart";
 
 import { CartContext } from "../App";
 import { useContext } from "react";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import RecieptModal from "./RecieptModal";
 function a11yProps(index) {
 	return {
@@ -56,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 	card: {
 		width: "30%",
 		margin: "10px 10px",
+		position: "relative",
 	},
 }));
 
@@ -127,6 +129,14 @@ function Transactions() {
 										<Card
 											onClick={() => cartInfo.handleSelection(product._id)}
 											className={classes.card}>
+											<div
+												className={`m-overlay ${
+													cartInfo.cartItems.find((i) => i._id === product._id)
+														? "active"
+														: ""
+												} `}>
+												<CheckCircleOutlineIcon className="d-block" />
+											</div>
 											<CardActionArea>
 												<CardMedia
 													component="img"
@@ -167,6 +177,16 @@ function Transactions() {
 											<Card
 												onClick={() => cartInfo.handleSelection(product._id)}
 												className={classes.card}>
+												<div
+													className={`m-overlay ${
+														cartInfo.cartItems.find(
+															(i) => i._id === product._id,
+														)
+															? "active"
+															: ""
+													} `}>
+													<CheckCircleOutlineIcon className="d-block" />
+												</div>
 												<CardActionArea>
 													<CardMedia
 														component="img"
@@ -211,7 +231,6 @@ function Transactions() {
 					</Paper>
 				</Grid>
 			</Grid>
-			<RecieptModal isOpen={recieptModalOpen} />
 		</Container>
 	);
 }

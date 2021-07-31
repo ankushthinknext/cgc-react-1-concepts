@@ -17,14 +17,14 @@ import ProductForm from "../components/ProductForm";
 function Dashboard(props) {
 	return (
 		<div class="m-dashboard">
-			<div className="d-top-nav">
-				<Header />
-			</div>
 			<div className="content-wrap">
 				<div className="d-sidebar">
 					<Sidebar />
 				</div>
 				<div className="d-main">
+					<div className="d-top-nav">
+						<Header />
+					</div>
 					<Switch>
 						<Route
 							path={`${props.match.path}/users/new`}
@@ -53,7 +53,10 @@ function Dashboard(props) {
 							component={Categories}
 						/>
 						<Route path={`${props.match.path}/orders`} component={Orders} />
-						<Route path={`${props.match.path}/`} component={DashboardPanel} />
+						<Route
+							path={`${props.match.path}/main`}
+							component={DashboardPanel}
+						/>
 					</Switch>
 				</div>
 			</div>

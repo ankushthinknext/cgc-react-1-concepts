@@ -12,9 +12,8 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
+import { Typography } from "@material-ui/core";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -24,27 +23,48 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function RecieptModal({ isOpen, transactionData }) {
+export default function RecieptModal({
+	isOpen,
+	transactionData,
+	onOpen,
+	onClose,
+}) {
 	const classes = useStyles();
-	const [open, setOpen] = React.useState(isOpen);
-
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
-
-	const handleClose = () => {
-		setOpen(false);
-	};
+	const [open, setOpen] = React.useState(false);
 
 	return (
 		<div>
 			<Dialog
-				open={open}
-				onClose={handleClose}
+				open={isOpen}
+				onClose={onClose}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description">
 				<DialogTitle id="alert-dialog-title">
-					{"Use Google's location service?"}
+					<Typography
+						align="center"
+						className="text-muted"
+						variant="h4"
+						component="h5"
+						gutterBottom>
+						Receipt
+					</Typography>
+					<Typography
+						align="center"
+						className="text-muted"
+						variant="caption"
+						component="h5"
+						gutterBottom>
+						{transactionData &&
+							moment(transactionData.createdAt).format("llll")}
+					</Typography>
+					<Typography
+						align="center"
+						className="text-muted"
+						variant="caption"
+						component="h5"
+						gutterBottom>
+						{transactionData && transactionData._id}
+					</Typography>
 				</DialogTitle>
 				<DialogContent>
 					<Table className={classes.table} aria-label="simple table">
@@ -52,7 +72,7 @@ export default function RecieptModal({ isOpen, transactionData }) {
 							<TableRow>
 								<TableCell align="left">Product</TableCell>
 								<TableCell align="center">Quantity</TableCell>
-								<TableCell align="center">Price</TableCell>
+								<TableCell align="center">Unit Price</TableCell>
 								<TableCell align="right">Total</TableCell>
 							</TableRow>
 						</TableHead>
@@ -65,6 +85,7 @@ export default function RecieptModal({ isOpen, transactionData }) {
 											{item.name} {item.price}
 										</TableCell>
 										<TableCell align="right">{item.qty} </TableCell>
+										<TableCell align="right">{item.price} </TableCell>
 
 										<TableCell align="right">
 											{(item.price * item.qty).toFixed(2)}
@@ -73,13 +94,41 @@ export default function RecieptModal({ isOpen, transactionData }) {
 								))}
 						</TableBody>
 					</Table>
+					<Table>
+						<TableRow>
+							<TableCell align="right">Sub Total</TableCell>
+							<TableCell align="right">
+								{transactionData && transactionData.subtotal}
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell align="right">Discount</TableCell>
+							<TableCell align="right">
+								{transactionData && transactionData.discount}
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell align="right">
+								<Typography variant="h5" component="h5">
+									Grand Total
+								</Typography>
+							</TableCell>
+							<TableCell align="right">
+								<Typography variant="h5" component="h5">
+									{transactionData && transactionData.grandtotal}
+								</Typography>
+							</TableCell>
+						</TableRow>
+					</Table>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Disagree
-					</Button>
-					<Button onClick={handleClose} color="primary" autoFocus>
-						Agree
+					<Button
+						onClick={onClose}
+						variant="contained"
+						fullWidth
+						className="c-btn"
+						color="primary">
+						Print Receipt
 					</Button>
 				</DialogActions>
 			</Dialog>

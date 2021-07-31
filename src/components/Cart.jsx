@@ -35,6 +35,7 @@ function Cart(props) {
 	const { cartItems } = cartDetails;
 	const tax = storeSettings ? (+storeSettings.tax / 100) * subTotal : 0;
 	const grandTotal = storeSettings ? subTotal + tax - discount : 0;
+	const [transactionData, setTransactionData] = useState(null);
 	const handleSubmit = async () => {
 		let result =
 			cartItems.length !== 0
@@ -47,11 +48,18 @@ function Cart(props) {
 				: false;
 		if (result && result.data.status === "success") {
 			cartDetails.removeAllCartItems();
-			props.onTransactionData(result.data.data);
+			setTransactionData(result.data.data);
 			setModalOpen(true);
 		}
 	};
-	console.log("modal state", modalOpen);
+
+	const handleClickOpen = () => {
+		setModalOpen(true);
+	};
+
+	const handleClose = () => {
+		setModalOpen(false);
+	};
 
 	return (
 		<div>
@@ -132,7 +140,12 @@ function Cart(props) {
 					</TableRow>
 				</TableBody>
 			</Table>
-			<RecieptModal isOpen={modalOpen} />
+			<RecieptModal
+				isOpen={modalOpen}
+				onOpen={handleClickOpen}
+				onClose={handleClose}
+				transactionData={transactionData}
+			/>
 		</div>
 	);
 }

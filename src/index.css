@@ -50,6 +50,9 @@ code {
 .m-card img {
 	width: 100%;
 }
+.nav-list li {
+	margin-left: 20px;
+}
 
 a {
 	text-decoration: none;
@@ -58,23 +61,38 @@ a:hover {
 	color: black;
 }
 .m-navbar {
+	padding: 10px;
 	display: flex;
+	height: 60px;
 	justify-content: flex-end;
+	align-items: center;
+	background: linear-gradient(
+		45deg,
+		rgba(234, 81, 121, 1) 0%,
+		rgba(172, 54, 115, 1) 100%
+	);
+	margin-bottom: 20px;
 }
 .m-navbar .nav-list {
 	display: flex;
+	align-items: center;
 }
 
 .sidebar-links {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
 	padding: 10px;
 	cursor: pointer;
+	height: 90px;
+	width: 90px;
+	border-radius: 10px;
 }
-.sidebar-links h .sidebar-links:hover {
-	background-color: white;
-}
+
 .sidebar-links.active {
-	background-color: indigo;
+	background-color: #ea5179;
 }
 .d-sm-cards {
 	border-radius: 10px !important;
@@ -113,10 +131,28 @@ a:hover {
 }
 ul {
 	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 .p-errors {
 	color: red;
 }
 .tabs-wrapper {
 	flex-wrap: wrap;
+}
+.m-overlay {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.m-overlay.active {
+	z-index: 100;
+	background-color: black;
+	opacity: 0.8;
 }
